@@ -6,18 +6,19 @@ canvas.height = window.innerHeight;
 const confettiColors = ['#ffeb3b', '#ffc107', '#ff9800', '#ff5722', '#795548', '#9e9e9e', '#607d8b'];
 let confettis = Array.from({ length: 150 }, () => createConfetti());
 
-const balloonImages = ['images/accessories/red-balloon.jpeg', 'images/accessories/white-balloon.jpeg', 'images/accessories/black-balloon.jpeg']; // Array of balloon image paths
+const balloonImages = ['images/accessories/balloons.png', 'images/accessories/balloons.png', 'images/accessories/balloons.png']; // Array of balloon image paths
 const balloons = [];
 
 balloonImages.forEach(src => {
   const img = new Image();
   img.src = src;
   img.onload = () => {
-    for (let i = 0; i < 7; i++) { // Create multiple balloons for each type
+    for (let i = 0; i < 4; i++) { // Create multiple balloons for each type
       balloons.push({
         img: img,
         x: Math.random() * canvas.width,
         y: canvas.height + Math.random() * 100,
+        sizeMultiplier: Math.random() * 0.1 + 0.1,
         dY: Math.random() * -3 - 1
       });
     }
@@ -43,7 +44,9 @@ function drawConfetti(confetti) {
 }
 
 function drawBalloon(balloon) {
-  ctx.drawImage(balloon.img, balloon.x, balloon.y);
+    const scaledWidth = balloon.img.width * balloon.sizeMultiplier;
+    const scaledHeight = balloon.img.height * balloon.sizeMultiplier;
+    ctx.drawImage(balloon.img, balloon.x, balloon.y, scaledWidth, scaledHeight);
 }
 
 function update() {
