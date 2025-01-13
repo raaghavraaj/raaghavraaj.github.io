@@ -37,25 +37,7 @@ canvas {
 #countdown-timer-1 {
     position: absolute;
     bottom: 10%; /* Adjust this value to position the timer appropriately */
-    left: 20%; /* Center the timer horizontally */
-    transform: translateX(-50%); /* Adjust horizontal positioning */
-    color: #fff; /* White text color for visibility */
-    font-size: 4em; /* Larger font size for visibility */
-    text-shadow: 3px 3px 3px #888; /* Simple 3D effect */
-    font-family: 'Arial', sans-serif; /* Consistent font style */
-    font-weight: bold; /* Consistent font style */  
-    animation: floatUp 5s forwards; /* Animation to float up and stay */
-}
-
-@keyframes floatUp {
-    0% { bottom: 10%; }
-    100% { bottom: 50%; } /* Adjust this to where you want the timer to stop */
-}
-
-#countdown-timer-2 {
-    position: absolute;
-    bottom: 10%; /* Adjust this value to position the timer appropriately */
-    right: 0%; /* Center the timer horizontally */
+    left: 50%; /* Center the timer horizontally */
     transform: translateX(-50%); /* Adjust horizontal positioning */
     color: #fff; /* White text color for visibility */
     font-size: 4em; /* Larger font size for visibility */

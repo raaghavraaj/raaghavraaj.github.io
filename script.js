@@ -79,7 +79,7 @@ function update() {
 update();
 
 const countdown1 = document.getElementById('countdown-timer-1');
-const targetDate1 = new Date('2025-01-15T00:00:00').getTime(); // Set your target date and time
+const targetDate1 = new Date('2025-01-14T00:00:00').getTime(); // Set your target date and time
 
 function updateCountdown1() {
   const now = new Date().getTime();
@@ -99,35 +99,8 @@ function updateCountdown1() {
   const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
   // Display the result
-  countdown1.innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+  countdown1.innerHTML = days + " days " + hours + " hrs " + minutes + " mins " + seconds + " sec ";
 }
 
 // Update the count down every 1 second
 const interval1 = setInterval(updateCountdown1, 1000);
-
-const countdown2 = document.getElementById('countdown-timer-2');
-const targetDate2 = new Date('2025-01-15T00:00:00').getTime(); // Set your target date and time
-
-function updateCountdown2() {
-  const now = new Date().getTime();
-  const distance = targetDate2 - now;
-
-  if (distance < 0) {
-    clearInterval(interval2);
-    countdown2.innerHTML = "00:00:00";
-    alert('Countdown Finished!');
-    return;
-  }
-
-  // Time calculations for days, hours, minutes and seconds
-  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-  // Display the result
-  countdown2.innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
-}
-
-// Update the count down every 1 second
-const interval2 = setInterval(updateCountdown2, 1000);
