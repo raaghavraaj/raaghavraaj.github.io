@@ -6,7 +6,7 @@ canvas.height = window.innerHeight;
 const confettiColors = ['#ffeb3b', '#ffc107', '#ff9800', '#ff5722', '#795548', '#9e9e9e', '#607d8b'];
 let confettis = Array.from({ length: 150 }, () => createConfetti());
 
-const balloonImages = ['images/accessories/balloons.png', 'images/accessories/balloons.png', 'images/accessories/balloons.png']; // Array of balloon image paths
+const balloonImages = ['accessories/images/balloons.png', 'accessories/images/balloons.png', 'accessories/images/balloons.png']; // Array of balloon image paths
 const balloons = [];
 
 balloonImages.forEach(src => {
@@ -104,3 +104,14 @@ function updateCountdown1() {
 
 // Update the count down every 1 second
 const interval1 = setInterval(updateCountdown1, 1000);
+
+// Select the birthday message element
+const birthdayMessage = document.getElementById('birthday-message');
+
+// Create an audio object for the sound effect
+const boomSound = new Audio('accessories/sounds/boom-hbd.mp3');
+
+// Play the sound when the animation starts
+birthdayMessage.addEventListener('animationstart', () => {
+    boomSound.play();
+});

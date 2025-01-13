@@ -1,3 +1,6 @@
+/* Importing Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
+
 body, html {
     margin: 0;
     padding: 0;
@@ -16,22 +19,34 @@ canvas {
 }
 
 #birthday-message {
-    position: absolute;
-    width: 90%; /* Nearly full width */
-    left: 5%; /* Centering the text */
-    bottom: 10%; /* Initial position from bottom */
+    font-family: 'Luckiest Guy', cursive; /* Funky font */
+    font-size: 8em; /* Big font size */
     text-align: center;
-    font-size: 4em;
+    position: absolute;
+    width: 100%;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0); /* Start hidden with scale 0 */
     color: #ff4081;
-    font-family: 'Arial', sans-serif;
-    font-weight: bold;
-    text-shadow: 3px 3px 3px #888; /* Simple 3D effect */
-    animation: riseToTop 5s forwards; /* Animation to rise and stick below top */
+    text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
+    animation: popIn 2s ease-out forwards; /* Pop-in animation */
+    background: linear-gradient(90deg, #ff4081, #ffeb3b, #00e676);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; /* Gradient fill */
 }
 
-@keyframes riseToTop {
-    0% { bottom: 10%; }
-    100% { bottom: 80%; } /* Sticks below the top, adjust this value as needed */
+@keyframes popIn {
+    0% {
+        transform: translate(-50%, -50%) scale(0); /* Invisible */
+        opacity: 0; /* Fully transparent */
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2); /* Slightly larger for bounce */
+        opacity: 1; /* Fully visible */
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1); /* Settle at normal size */
+    }
 }
 
 #countdown-timer-1 {
