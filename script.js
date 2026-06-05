@@ -167,6 +167,14 @@ function elapsedSeconds() {
   return (performance.now() - questionStartMs) / 1000;
 }
 
+function formatAnswerSeconds(seconds) {
+  return `${seconds.toFixed(2)}s`;
+}
+
+function roundAnswerSeconds(seconds) {
+  return Math.round(seconds * 100) / 100;
+}
+
 function computeReadSeconds(prompt) {
   const chars = prompt.en.length + prompt.hi.length;
   const raw = READ_TIME.BASE_SECONDS + chars * READ_TIME.SECONDS_PER_CHAR;
@@ -220,9 +228,9 @@ function startPromptCountdown(durationSeconds) {
 function startTimer() {
   stopTimer();
   questionStartMs = performance.now();
-  timerDisplay.textContent = "0.0s";
+  timerDisplay.textContent = "0.00s";
   timerIntervalId = setInterval(() => {
-    timerDisplay.textContent = `${elapsedSeconds().toFixed(1)}s`;
+    timerDisplay.textContent = formatAnswerSeconds(elapsedSeconds());
   }, 100);
 }
 
@@ -463,7 +471,7 @@ function finishQuestion({ skipped, correct }) {
     correctOrder: type === "order" ? [...currentQuestion.correctOrder] : null,
     correctAnswer: type === "single" ? currentQuestion.correctAnswer : null,
     correct: skipped ? null : correct,
-    seconds: Math.round(seconds * 10) / 10,
+    seconds: roundAnswerSeconds(seconds),
     timestamp: new Date().toISOString(),
   };
   sessionLog.push(entry);
@@ -487,7 +495,7 @@ function showFeedback({ skipped, correct, seconds }) {
     feedbackHeadline.classList.add("is-wrong");
   }
 
-  feedbackTime.textContent = `Time: ${seconds.toFixed(1)} seconds`;
+  feedbackTime.textContent = `Time: ${seconds.toFixed(2)} seconds`;
 
   const type = getQuestionType(currentQuestion);
   const singleLabels = type === "single";
@@ -560,12 +568,12 @@ function computeSessionStats() {
   const totalSeconds = sessionLog.reduce((sum, e) => sum + e.seconds, 0);
   const answered = sessionLog.filter((e) => !e.skipped);
   const avgSeconds =
-    answered.length > 0
-      ? Math.round((totalSeconds / sessionLog.length) * 10) / 10
+    sessionLog.length > 0
+      ? roundAnswerSeconds(totalSeconds / sessionLog.length)
       : 0;
   const avgAnsweredSeconds =
     answered.length > 0
-      ? Math.round((answered.reduce((s, e) => s + e.seconds, 0) / answered.length) * 10) / 10
+      ? roundAnswerSeconds(answered.reduce((s, e) => s + e.seconds, 0) / answered.length)
       : 0;
 
   return {
@@ -573,7 +581,7 @@ function computeSessionStats() {
     correct,
     incorrect,
     skipped,
-    totalSeconds: Math.round(totalSeconds * 10) / 10,
+    totalSeconds: roundAnswerSeconds(totalSeconds),
     avgSeconds,
     avgAnsweredSeconds,
     completed: attempted >= sessionTarget,
@@ -620,15 +628,15 @@ function showSummary() {
     </div>
     <div class="summary-stat">
       <dt>Total time</dt>
-      <dd>${stats.totalSeconds}s</dd>
+      <dd>${stats.totalSeconds.toFixed(2)}s</dd>
     </div>
     <div class="summary-stat">
       <dt>Avg time / question</dt>
-      <dd>${stats.avgSeconds}s</dd>
+      <dd>${stats.avgSeconds.toFixed(2)}s</dd>
     </div>
     <div class="summary-stat">
       <dt>Avg time (answered)</dt>
-      <dd>${stats.avgAnsweredSeconds}s</dd>
+      <dd>${stats.avgAnsweredSeconds.toFixed(2)}s</dd>
     </div>
   `;
 
@@ -638,7 +646,7 @@ function showSummary() {
         <tr>
           <td>${i + 1}</td>
           <td><span class="result-badge ${resultClass(entry)}">${resultLabel(entry)}</span></td>
-          <td>${entry.seconds.toFixed(1)}s</td>
+          <td>${entry.seconds.toFixed(2)}s</td>
           <td title="${escapeHtml(formatPromptSummary(entry.prompt))}">${escapeHtml(truncate(entry.prompt.en))}<br><span class="summary-prompt-hi">${escapeHtml(truncate(entry.prompt.hi, 48))}</span></td>
         </tr>
       `
