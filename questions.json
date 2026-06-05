@@ -1,38 +1,309 @@
 {
-  "version": 1,
+  "version": 3,
+  "questionTypes": {
+    "order": "Use correctOrder (4 keys). User taps A–D in sequence.",
+    "single": "Use type \"single\" and correctAnswer (one key). User taps one option."
+  },
   "questions": [
     {
-      "id": "demo-1",
-      "prompt": "Arrange these numbers from smallest to largest.",
+      "id": "fff-081",
+      "prompt": {
+        "en": "Arrange these Indian states by the number of Vidhansabha seats (highest to lowest):",
+        "hi": "इन भारतीय राज्यों को विधानसभा सीटों की संख्या (सबसे अधिक से सबसे कम) के अनुसार व्यवस्थित करें:"
+      },
       "options": [
-        { "key": "A", "text": "9" },
-        { "key": "B", "text": "3" },
-        { "key": "C", "text": "7" },
-        { "key": "D", "text": "1" }
+        { "key": "A", "text": { "en": "Uttar Pradesh", "hi": "उत्तर प्रदेश" } },
+        { "key": "B", "text": { "en": "Maharashtra", "hi": "महाराष्ट्र" } },
+        { "key": "C", "text": { "en": "West Bengal", "hi": "पश्चिम बंगाल" } },
+        { "key": "D", "text": { "en": "Tamil Nadu", "hi": "तमिलनाडु" } }
       ],
-      "correctOrder": ["D", "B", "C", "A"]
+      "type": "order",
+      "correctOrder": ["A", "B", "D", "C"]
     },
     {
-      "id": "demo-2",
-      "prompt": "Arrange these Indian cities from north to south.",
+      "id": "fff-082",
+      "prompt": {
+        "en": "Arrange these states by the year of their first Vidhansabha elections:",
+        "hi": "इन राज्यों को उनके पहले विधानसभा चुनाव के वर्ष के अनुसार व्यवस्थित करें:"
+      },
       "options": [
-        { "key": "A", "text": "Delhi" },
-        { "key": "B", "text": "Mumbai" },
-        { "key": "C", "text": "Chennai" },
-        { "key": "D", "text": "Kolkata" }
+        { "key": "A", "text": { "en": "Kerala", "hi": "केरल" } },
+        { "key": "B", "text": { "en": "Gujarat", "hi": "गुजरात" } },
+        { "key": "C", "text": { "en": "Andhra Pradesh", "hi": "आंध्र प्रदेश" } },
+        { "key": "D", "text": { "en": "Punjab", "hi": "पंजाब" } }
       ],
-      "correctOrder": ["A", "D", "B", "C"]
+      "type": "order",
+      "correctOrder": ["D", "C", "A", "B"]
     },
     {
-      "id": "demo-3",
-      "prompt": "Arrange these planets by distance from the Sun (nearest first).",
+      "id": "fff-083",
+      "prompt": {
+        "en": "Arrange these Chief Ministers by order of assuming office (earliest to latest):",
+        "hi": "इन मुख्यमंत्रियों को पदभार ग्रहण करने के क्रम (सबसे पहले से सबसे हाल ही में) के अनुसार व्यवस्थित करें:"
+      },
       "options": [
-        { "key": "A", "text": "Mars" },
-        { "key": "B", "text": "Venus" },
-        { "key": "C", "text": "Earth" },
-        { "key": "D", "text": "Mercury" }
+        { "key": "A", "text": { "en": "Naveen Patnaik", "hi": "नवीन पटनायक" } },
+        { "key": "B", "text": { "en": "M. K. Stalin", "hi": "एम. के. स्टालिन" } },
+        { "key": "C", "text": { "en": "Nitish Kumar", "hi": "नीतीश कुमार" } },
+        { "key": "D", "text": { "en": "Yogi Adityanath", "hi": "योगी आदित्यनाथ" } }
       ],
-      "correctOrder": ["D", "B", "C", "A"]
+      "type": "order",
+      "correctOrder": ["A", "C", "D", "B"]
+    },
+    {
+      "id": "fff-084",
+      "prompt": {
+        "en": "Arrange these Vidhansabha election years in Maharashtra in order:",
+        "hi": "महाराष्ट्र में इन विधानसभा चुनाव वर्षों को क्रम में व्यवस्थित करें:"
+      },
+      "options": [
+        { "key": "A", "text": { "en": "1999", "hi": "1999" } },
+        { "key": "B", "text": { "en": "2004", "hi": "2004" } },
+        { "key": "C", "text": { "en": "2009", "hi": "2009" } },
+        { "key": "D", "text": { "en": "2019", "hi": "2019" } }
+      ],
+      "type": "order",
+      "correctOrder": ["A", "B", "C", "D"]
+    },
+    {
+      "id": "fff-085",
+      "prompt": {
+        "en": "Arrange these political parties by strength in West Bengal Vidhansabha (2021):",
+        "hi": "पश्चिम बंगाल विधानसभा (2021) में इन राजनीतिक दलों को ताकत के अनुसार व्यवस्थित करें:"
+      },
+      "options": [
+        { "key": "A", "text": { "en": "BJP", "hi": "भाजपा" } },
+        { "key": "B", "text": { "en": "TMC", "hi": "टीएमसी" } },
+        { "key": "C", "text": { "en": "Congress", "hi": "कांग्रेस" } },
+        { "key": "D", "text": { "en": "CPI(M)", "hi": "सीपीआई(एम)" } }
+      ],
+      "type": "order",
+      "correctOrder": ["B", "A", "C", "D"]
+    },
+    {
+      "id": "fff-086",
+      "prompt": {
+        "en": "Arrange these phases of a Vidhansabha election process:",
+        "hi": "विधानसभा चुनाव प्रक्रिया के इन चरणों को व्यवस्थित करें:"
+      },
+      "options": [
+        { "key": "A", "text": { "en": "Counting of votes", "hi": "वोटों की गिनती" } },
+        { "key": "B", "text": { "en": "Nomination of candidates", "hi": "उम्मीदवारों का नामांकन" } },
+        { "key": "C", "text": { "en": "Campaigning", "hi": "प्रचार" } },
+        { "key": "D", "text": { "en": "Voting", "hi": "मतदान" } }
+      ],
+      "type": "order",
+      "correctOrder": ["B", "C", "D", "A"]
+    },
+    {
+      "id": "fff-087",
+      "prompt": {
+        "en": "Arrange these states by frequency of Vidhansabha elections due to assembly dissolutions:",
+        "hi": "विधानसभा भंग होने के कारण विधानसभा चुनावों की आवृत्ति के अनुसार इन राज्यों को व्यवस्थित करें:"
+      },
+      "options": [
+        { "key": "A", "text": { "en": "Jammu & Kashmir", "hi": "जम्मू और कश्मीर" } },
+        { "key": "B", "text": { "en": "Uttar Pradesh", "hi": "उत्तर प्रदेश" } },
+        { "key": "C", "text": { "en": "Bihar", "hi": "बिहार" } },
+        { "key": "D", "text": { "en": "Delhi", "hi": "दिल्ली" } }
+      ],
+      "type": "order",
+      "correctOrder": ["A", "C", "D", "B"]
+    },
+    {
+      "id": "fff-088",
+      "prompt": {
+        "en": "Arrange these reforms in Vidhansabha election system chronologically:",
+        "hi": "विधानसभा चुनाव प्रणाली में इन सुधारों को कालानुक्रमिक रूप से व्यवस्थित करें:"
+      },
+      "options": [
+        { "key": "A", "text": { "en": "Use of EVMs", "hi": "ईवीएम का उपयोग" } },
+        { "key": "B", "text": { "en": "VVPAT introduction", "hi": "वीवीपीएटी परिचय" } },
+        { "key": "C", "text": { "en": "Model Code of Conduct", "hi": "आदर्श आचार संहिता" } },
+        { "key": "D", "text": { "en": "NOTA option", "hi": "नोटा विकल्प" } }
+      ],
+      "type": "order",
+      "correctOrder": ["C", "A", "D", "B"]
+    },
+    {
+      "id": "fff-089",
+      "prompt": {
+        "en": "Arrange these Indian states by alphabetical order of their Vidhansabha name:",
+        "hi": "इन भारतीय राज्यों को उनके विधानसभा नाम के वर्णानुक्रम के अनुसार व्यवस्थित करें:"
+      },
+      "options": [
+        { "key": "A", "text": { "en": "Karnataka", "hi": "कर्नाटक" } },
+        { "key": "B", "text": { "en": "Kerala", "hi": "केरल" } },
+        { "key": "C", "text": { "en": "Haryana", "hi": "हरियाणा" } },
+        { "key": "D", "text": { "en": "Gujarat", "hi": "गुजरात" } }
+      ],
+      "type": "order",
+      "correctOrder": ["D", "C", "A", "B"]
+    },
+    {
+      "id": "fff-090",
+      "prompt": {
+        "en": "Arrange these states by voter turnout in their latest Vidhansabha elections (highest to lowest):",
+        "hi": "इन राज्यों को उनके नवीनतम विधानसभा चुनावों में मतदाता मतदान (उच्चतम से निम्नतम) के अनुसार व्यवस्थित करें:"
+      },
+      "options": [
+        { "key": "A", "text": { "en": "Nagaland", "hi": "नागालैंड" } },
+        { "key": "B", "text": { "en": "Rajasthan", "hi": "राजस्थान" } },
+        { "key": "C", "text": { "en": "Tripura", "hi": "त्रिपुरा" } },
+        { "key": "D", "text": { "en": "Gujarat", "hi": "गुजरात" } }
+      ],
+      "type": "order",
+      "correctOrder": ["C", "A", "B", "D"]
+    },
+    {
+      "id": "fff-091",
+      "prompt": {
+        "en": "Arrange these continents by land area (largest to smallest):",
+        "hi": "इन महाद्वीपों को भूमि क्षेत्र (सबसे बड़े से सबसे छोटे) के अनुसार व्यवस्थित करें:"
+      },
+      "options": [
+        { "key": "A", "text": { "en": "Africa", "hi": "अफ्रीका" } },
+        { "key": "B", "text": { "en": "Asia", "hi": "एशिया" } },
+        { "key": "C", "text": { "en": "Europe", "hi": "यूरोप" } },
+        { "key": "D", "text": { "en": "North America", "hi": "उत्तरी अमेरिका" } }
+      ],
+      "type": "order",
+      "correctOrder": ["B", "A", "D", "C"]
+    },
+    {
+      "id": "fff-092",
+      "prompt": {
+        "en": "Arrange these rivers by length (longest to shortest):",
+        "hi": "इन नदियों को लंबाई (सबसे लंबी से सबसे छोटी) के अनुसार व्यवस्थित करें:"
+      },
+      "options": [
+        { "key": "A", "text": { "en": "Nile", "hi": "नील" } },
+        { "key": "B", "text": { "en": "Amazon", "hi": "अमेज़न" } },
+        { "key": "C", "text": { "en": "Yangtze", "hi": "यांग्त्ज़ी" } },
+        { "key": "D", "text": { "en": "Mississippi", "hi": "मिसिसिपी" } }
+      ],
+      "type": "order",
+      "correctOrder": ["A", "B", "C", "D"]
+    },
+    {
+      "id": "fff-093",
+      "prompt": {
+        "en": "Arrange these mountain ranges by their location from west to east:",
+        "hi": "इन पर्वत श्रृंखलाओं को पश्चिम से पूर्व की ओर उनके स्थान के अनुसार व्यवस्थित करें:"
+      },
+      "options": [
+        { "key": "A", "text": { "en": "Andes", "hi": "एंडीज़" } },
+        { "key": "B", "text": { "en": "Alps", "hi": "आल्प्स" } },
+        { "key": "C", "text": { "en": "Himalayas", "hi": "हिमालय" } },
+        { "key": "D", "text": { "en": "Rockies", "hi": "रॉकीज़" } }
+      ],
+      "type": "order",
+      "correctOrder": ["D", "A", "B", "C"]
+    },
+    {
+      "id": "fff-094",
+      "prompt": {
+        "en": "Arrange these Indian states by coastline length (longest to shortest):",
+        "hi": "इन भारतीय राज्यों को समुद्र तट की लंबाई (सबसे लंबी से सबसे छोटी) के अनुसार व्यवस्थित करें:"
+      },
+      "options": [
+        { "key": "A", "text": { "en": "Gujarat", "hi": "गुजरात" } },
+        { "key": "B", "text": { "en": "Maharashtra", "hi": "महाराष्ट्र" } },
+        { "key": "C", "text": { "en": "Tamil Nadu", "hi": "तमिलनाडु" } },
+        { "key": "D", "text": { "en": "Odisha", "hi": "ओडिशा" } }
+      ],
+      "type": "order",
+      "correctOrder": ["A", "C", "B", "D"]
+    },
+    {
+      "id": "fff-095",
+      "prompt": {
+        "en": "Arrange these layers of Earth from outermost to innermost:",
+        "hi": "पृथ्वी की इन परतों को सबसे बाहरी से सबसे भीतरी तक व्यवस्थित करें:"
+      },
+      "options": [
+        { "key": "A", "text": { "en": "Mantle", "hi": "मेंटल" } },
+        { "key": "B", "text": { "en": "Inner Core", "hi": "इनर कोर" } },
+        { "key": "C", "text": { "en": "Crust", "hi": "क्रस्ट" } },
+        { "key": "D", "text": { "en": "Outer Core", "hi": "आउटर कोर" } }
+      ],
+      "type": "order",
+      "correctOrder": ["C", "A", "D", "B"]
+    },
+    {
+      "id": "fff-096",
+      "prompt": {
+        "en": "Arrange these oceans by depth (deepest to shallowest):",
+        "hi": "इन महासागरों को गहराई (सबसे गहरे से सबसे उथले) के अनुसार व्यवस्थित करें:"
+      },
+      "options": [
+        { "key": "A", "text": { "en": "Atlantic", "hi": "अटलांटिक" } },
+        { "key": "B", "text": { "en": "Pacific", "hi": "प्रशांत" } },
+        { "key": "C", "text": { "en": "Indian", "hi": "भारतीय" } },
+        { "key": "D", "text": { "en": "Southern", "hi": "दक्षिणी" } }
+      ],
+      "type": "order",
+      "correctOrder": ["B", "A", "C", "D"]
+    },
+    {
+      "id": "fff-097",
+      "prompt": {
+        "en": "Arrange these Indian rivers by origin altitude (highest to lowest):",
+        "hi": "इन भारतीय नदियों को उद्गम की ऊँचाई (सबसे अधिक से सबसे कम) के अनुसार व्यवस्थित करें:"
+      },
+      "options": [
+        { "key": "A", "text": { "en": "Brahmaputra", "hi": "ब्रह्मपुत्र" } },
+        { "key": "B", "text": { "en": "Ganga", "hi": "गंगा" } },
+        { "key": "C", "text": { "en": "Yamuna", "hi": "यमुना" } },
+        { "key": "D", "text": { "en": "Narmada", "hi": "नर्मदा" } }
+      ],
+      "type": "order",
+      "correctOrder": ["A", "C", "B", "D"]
+    },
+    {
+      "id": "fff-098",
+      "prompt": {
+        "en": "Arrange these desert regions by area (largest to smallest):",
+        "hi": "इन रेगिस्तानी क्षेत्रों को क्षेत्रफल (सबसे बड़े से सबसे छोटे) के अनुसार व्यवस्थित करें:"
+      },
+      "options": [
+        { "key": "A", "text": { "en": "Sahara", "hi": "सहारा" } },
+        { "key": "B", "text": { "en": "Gobi", "hi": "गोबी" } },
+        { "key": "C", "text": { "en": "Thar", "hi": "थार" } },
+        { "key": "D", "text": { "en": "Kalahari", "hi": "कालाहारी" } }
+      ],
+      "type": "order",
+      "correctOrder": ["A", "B", "D", "C"]
+    },
+    {
+      "id": "fff-099",
+      "prompt": {
+        "en": "Arrange these countries by the number of neighboring countries (most to least):",
+        "hi": "इन देशों को पड़ोसी देशों की संख्या (सबसे अधिक से सबसे कम) के अनुसार व्यवस्थित करें:"
+      },
+      "options": [
+        { "key": "A", "text": { "en": "China", "hi": "चीन" } },
+        { "key": "B", "text": { "en": "Russia", "hi": "रूस" } },
+        { "key": "C", "text": { "en": "Brazil", "hi": "ब्राज़ील" } },
+        { "key": "D", "text": { "en": "India", "hi": "भारत" } }
+      ],
+      "type": "order",
+      "correctOrder": ["B", "A", "C", "D"]
+    },
+    {
+      "id": "fff-100",
+      "prompt": {
+        "en": "Arrange these types of forests by rainfall required (highest to lowest):",
+        "hi": "इन वनों के प्रकारों को वर्षा की आवश्यकता (सबसे अधिक से सबसे कम) के अनुसार व्यवस्थित करें:"
+      },
+      "options": [
+        { "key": "A", "text": { "en": "Tropical Rainforest", "hi": "उष्णकटिबंधीय वर्षावन" } },
+        { "key": "B", "text": { "en": "Deciduous Forest", "hi": "पर्णपाती वन" } },
+        { "key": "C", "text": { "en": "Coniferous Forest", "hi": "शंकुधारी वन" } },
+        { "key": "D", "text": { "en": "Desert Vegetation", "hi": "रेगिस्तानी वनस्पति" } }
+      ],
+      "type": "order",
+      "correctOrder": ["A", "B", "C", "D"]
     }
   ]
 }

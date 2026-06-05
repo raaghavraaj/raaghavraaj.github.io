@@ -41,34 +41,42 @@
         <span id="question-counter" class="question-counter"></span>
       </header>
 
-      <p id="question-prompt" class="question-prompt"></p>
+      <div id="question-prompt" class="question-prompt" aria-live="polite"></div>
 
-      <p id="selection-display" class="selection-display" aria-live="polite">
-        Tap options in order…
-      </p>
+      <button type="button" id="btn-show-options" class="btn btn--primary btn-show-options">
+        Show options
+      </button>
 
-      <div id="options-grid" class="options-grid" role="group" aria-label="Answer options"></div>
+      <div id="game-answer-panel" class="game-answer-panel" hidden>
+        <p id="selection-display" class="selection-display" aria-live="polite"></p>
 
-      <div class="action-row">
-        <button type="button" id="btn-clear" class="btn btn--secondary">Clear</button>
-        <button type="button" id="btn-skip" class="btn btn--secondary">Skip</button>
+        <div id="options-grid" class="options-grid" role="group" aria-label="Answer options"></div>
+
+        <div class="action-row">
+          <button type="button" id="btn-clear" class="btn btn--secondary">Clear</button>
+          <button type="button" id="btn-skip" class="btn btn--secondary">Skip</button>
+        </div>
+
+        <p id="timer-display" class="timer-display">0.0s</p>
       </div>
 
-      <p id="timer-display" class="timer-display">0.0s</p>
-      <button type="button" id="btn-end-game" class="btn btn--ghost btn--end-game">End practice</button>
+      <div class="game-footer">
+        <button type="button" id="btn-skip-prompt" class="btn btn--secondary">Skip</button>
+        <button type="button" id="btn-end-game" class="btn btn--ghost">End practice</button>
+      </div>
     </section>
 
     <section id="screen-feedback" class="screen" hidden>
       <p id="feedback-headline" class="feedback-headline"></p>
       <p id="feedback-time" class="feedback-time"></p>
       <dl class="feedback-details">
-        <div class="feedback-row">
-          <dt>Your order</dt>
-          <dd id="feedback-your-order"></dd>
+        <div class="feedback-row feedback-row--block">
+          <dt id="feedback-your-label">Your order</dt>
+          <dd id="feedback-your-order" class="feedback-order"></dd>
         </div>
-        <div class="feedback-row">
-          <dt>Correct order</dt>
-          <dd id="feedback-correct-order"></dd>
+        <div class="feedback-row feedback-row--block">
+          <dt id="feedback-correct-label">Correct order</dt>
+          <dd id="feedback-correct-order" class="feedback-order"></dd>
         </div>
       </dl>
       <button type="button" id="btn-next" class="btn btn--primary">Next question</button>

@@ -18,15 +18,20 @@ const loadError = document.getElementById("load-error");
 const playerLabel = document.getElementById("player-label");
 const questionCounter = document.getElementById("question-counter");
 const questionPrompt = document.getElementById("question-prompt");
+const btnShowOptions = document.getElementById("btn-show-options");
+const gameAnswerPanel = document.getElementById("game-answer-panel");
 const selectionDisplay = document.getElementById("selection-display");
 const optionsGrid = document.getElementById("options-grid");
 const timerDisplay = document.getElementById("timer-display");
 const btnClear = document.getElementById("btn-clear");
 const btnSkip = document.getElementById("btn-skip");
+const btnSkipPrompt = document.getElementById("btn-skip-prompt");
 
 const feedbackHeadline = document.getElementById("feedback-headline");
 const feedbackTime = document.getElementById("feedback-time");
+const feedbackYourLabel = document.getElementById("feedback-your-label");
 const feedbackYourOrder = document.getElementById("feedback-your-order");
+const feedbackCorrectLabel = document.getElementById("feedback-correct-label");
 const feedbackCorrectOrder = document.getElementById("feedback-correct-order");
 const btnNext = document.getElementById("btn-next");
 const btnEnd = document.getElementById("btn-end");
@@ -46,8 +51,16 @@ let selection = [];
 let questionStartMs = 0;
 let timerIntervalId = null;
 let locked = false;
+let optionsRevealed = false;
 let sessionTarget = 20;
 const sessionLog = [];
+
+function getQuestionType(question) {
+  if (question.type === "single" || question.correctAnswer) {
+    return "single";
+  }
+  return "order";
+}
 
 function isSessionComplete() {
   return sessionLog.length >= sessionTarget;
@@ -75,14 +88,65 @@ function shuffle(array) {
   return copy;
 }
 
-function formatOrder(keys, question) {
-  if (!question) return "—";
-  const map = Object.fromEntries(question.options.map((o) => [o.key, o.text]));
-  return keys.map((k) => `${k} (${map[k]})`).join(" → ");
+function isLocalizedText(value) {
+  return (
+    value &&
+    typeof value === "object" &&
+    typeof value.en === "string" &&
+    value.en.trim() &&
+    typeof value.hi === "string" &&
+    value.hi.trim()
+  );
 }
 
-function formatOrderKeys(keys) {
-  return keys.join(" → ");
+function formatBilingual(text) {
+  return `${text.en} / ${text.hi}`;
+}
+
+function formatOrder(keys, question) {
+  if (!question || keys.length === 0) return "—";
+  const map = Object.fromEntries(question.options.map((o) => [o.key, o.text]));
+  return keys.map((k) => `${k} (${formatBilingual(map[k])})`).join(" → ");
+}
+
+function formatSingleAnswer(key, question) {
+  if (!question || !key) return "—";
+  const opt = question.options.find((o) => o.key === key);
+  return opt ? `${key} (${formatBilingual(opt.text)})` : key;
+}
+
+function formatUserResponse(selection, question) {
+  const type = getQuestionType(question);
+  if (type === "single") {
+    return formatSingleAnswer(selection[0], question);
+  }
+  return formatOrder(selection, question);
+}
+
+function formatCorrectResponse(question) {
+  const type = getQuestionType(question);
+  if (type === "single") {
+    return formatSingleAnswer(question.correctAnswer, question);
+  }
+  return formatOrder(question.correctOrder, question);
+}
+
+function renderPromptHtml(prompt) {
+  return `
+    <p class="prompt-line prompt-line--en">${escapeHtml(prompt.en)}</p>
+    <p class="prompt-line prompt-line--hi">${escapeHtml(prompt.hi)}</p>
+  `;
+}
+
+function renderOptionTextHtml(text) {
+  return `
+    <span class="option-line option-line--en">${escapeHtml(text.en)}</span>
+    <span class="option-line option-line--hi">${escapeHtml(text.hi)}</span>
+  `;
+}
+
+function formatPromptSummary(prompt) {
+  return `${prompt.en} ${prompt.hi}`;
 }
 
 function elapsedSeconds() {
@@ -106,20 +170,47 @@ function startTimer() {
 }
 
 function validateQuestion(q, index) {
-  if (!q.prompt || !Array.isArray(q.options) || q.options.length !== 4) {
-    throw new Error(`Question ${index}: needs prompt and 4 options.`);
+  if (!isLocalizedText(q.prompt) || !Array.isArray(q.options) || q.options.length !== 4) {
+    throw new Error(`Question ${index}: needs bilingual prompt (en, hi) and 4 options.`);
   }
   const keys = q.options.map((o) => o.key);
   if (!OPTION_KEYS.every((k) => keys.includes(k))) {
     throw new Error(`Question ${index}: option keys must be A, B, C, D.`);
   }
-  if (!Array.isArray(q.correctOrder) || q.correctOrder.length !== 4) {
-    throw new Error(`Question ${index}: correctOrder must have 4 keys.`);
-  }
-  const sortedCorrect = [...q.correctOrder].sort().join(",");
-  const sortedKeys = [...OPTION_KEYS].sort().join(",");
-  if (sortedCorrect !== sortedKeys) {
-    throw new Error(`Question ${index}: correctOrder must be a permutation of A–D.`);
+  q.options.forEach((opt, optIndex) => {
+    if (!isLocalizedText(opt.text)) {
+      throw new Error(`Question ${index}, option ${optIndex}: text must have en and hi.`);
+    }
+  });
+
+  const type = getQuestionType(q);
+  const hasOrder = Array.isArray(q.correctOrder) && q.correctOrder.length > 0;
+  const hasSingle = typeof q.correctAnswer === "string" && q.correctAnswer.length > 0;
+
+  if (type === "single") {
+    if (!hasSingle) {
+      throw new Error(`Question ${index}: single type needs correctAnswer (A–D).`);
+    }
+    if (!OPTION_KEYS.includes(q.correctAnswer)) {
+      throw new Error(`Question ${index}: correctAnswer must be A, B, C, or D.`);
+    }
+    if (hasOrder) {
+      throw new Error(`Question ${index}: use either correctAnswer or correctOrder, not both.`);
+    }
+    q.type = "single";
+  } else {
+    if (!hasOrder || q.correctOrder.length !== 4) {
+      throw new Error(`Question ${index}: order type needs correctOrder (4 keys).`);
+    }
+    const sortedCorrect = [...q.correctOrder].sort().join(",");
+    const sortedKeys = [...OPTION_KEYS].sort().join(",");
+    if (sortedCorrect !== sortedKeys) {
+      throw new Error(`Question ${index}: correctOrder must be a permutation of A–D.`);
+    }
+    if (hasSingle) {
+      throw new Error(`Question ${index}: use either correctAnswer or correctOrder, not both.`);
+    }
+    q.type = "order";
   }
 }
 
@@ -142,10 +233,36 @@ function drawNextQuestion() {
   return questionBank[index];
 }
 
+function setPromptPhaseUI() {
+  optionsRevealed = false;
+  btnShowOptions.hidden = false;
+  gameAnswerPanel.hidden = true;
+  btnSkipPrompt.hidden = false;
+  stopTimer();
+  timerDisplay.textContent = "—";
+}
+
+function setOptionsPhaseUI() {
+  optionsRevealed = true;
+  btnShowOptions.hidden = true;
+  gameAnswerPanel.hidden = false;
+  btnSkipPrompt.hidden = true;
+  updateSelectionUI();
+  startTimer();
+}
+
 function updateSelectionUI() {
+  if (!optionsRevealed) return;
+
+  const type = getQuestionType(currentQuestion);
+
   if (selection.length === 0) {
-    selectionDisplay.textContent = "Tap options in order…";
+    selectionDisplay.textContent =
+      type === "single" ? "Tap the correct option…" : "Tap options in order…";
     selectionDisplay.classList.remove("has-picks");
+  } else if (type === "single") {
+    selectionDisplay.textContent = `Selected: ${selection[0]}`;
+    selectionDisplay.classList.add("has-picks");
   } else {
     selectionDisplay.textContent = selection.join(" → ");
     selectionDisplay.classList.add("has-picks");
@@ -156,21 +273,26 @@ function updateSelectionUI() {
     const pickIndex = selection.indexOf(key);
     const picked = pickIndex !== -1;
     btn.classList.toggle("is-picked", picked);
-    btn.querySelector(".option-pick").textContent = picked ? String(pickIndex + 1) : "";
-    btn.disabled = locked || picked;
+    const pickEl = btn.querySelector(".option-pick");
+    if (type === "single") {
+      pickEl.textContent = picked ? "✓" : "";
+    } else {
+      pickEl.textContent = picked ? String(pickIndex + 1) : "";
+    }
+    if (type === "single") {
+      btn.disabled = locked;
+    } else {
+      btn.disabled = locked || picked;
+    }
   });
 
   btnClear.disabled = locked || selection.length === 0;
   btnSkip.disabled = locked;
 }
 
-function renderQuestion(question) {
-  currentQuestion = question;
-  selection = [];
-  locked = false;
-
-  questionPrompt.textContent = question.prompt;
+function buildOptionsGrid(question) {
   optionsGrid.innerHTML = "";
+  const type = getQuestionType(question);
 
   question.options.forEach((opt) => {
     const btn = document.createElement("button");
@@ -179,17 +301,39 @@ function renderQuestion(question) {
     btn.dataset.key = opt.key;
     btn.innerHTML = `
       <span class="option-key">${opt.key}</span>
-      <span class="option-text">${escapeHtml(opt.text)}</span>
-      <span class="option-pick"></span>
+      <span class="option-text">${renderOptionTextHtml(opt.text)}</span>
+      <span class="option-pick" aria-hidden="true"></span>
     `;
     btn.addEventListener("click", () => onOptionClick(opt.key));
     optionsGrid.appendChild(btn);
   });
 
-  updateQuestionCounter();
+  optionsGrid.dataset.questionType = type;
+}
 
-  updateSelectionUI();
-  startTimer();
+function revealOptions() {
+  if (locked || optionsRevealed || !currentQuestion) return;
+  setOptionsPhaseUI();
+}
+
+function renderQuestion(question) {
+  currentQuestion = question;
+  selection = [];
+  locked = false;
+
+  questionPrompt.innerHTML = renderPromptHtml(question.prompt);
+  buildOptionsGrid(question);
+  setPromptPhaseUI();
+
+  updateQuestionCounter();
+}
+
+function isAnswerCorrect() {
+  const type = getQuestionType(currentQuestion);
+  if (type === "single") {
+    return selection[0] === currentQuestion.correctAnswer;
+  }
+  return ordersMatch(selection, currentQuestion.correctOrder);
 }
 
 function escapeHtml(str) {
@@ -199,7 +343,18 @@ function escapeHtml(str) {
 }
 
 function onOptionClick(key) {
-  if (locked || selection.includes(key)) return;
+  if (locked || !optionsRevealed) return;
+
+  const type = getQuestionType(currentQuestion);
+
+  if (type === "single") {
+    selection = [key];
+    updateSelectionUI();
+    submitAnswer();
+    return;
+  }
+
+  if (selection.includes(key)) return;
   selection.push(key);
   updateSelectionUI();
   if (selection.length === 4) {
@@ -214,15 +369,19 @@ function ordersMatch(a, b) {
 function finishQuestion({ skipped, correct }) {
   locked = true;
   stopTimer();
-  const seconds = elapsedSeconds();
+  const type = getQuestionType(currentQuestion);
+  const seconds = optionsRevealed ? elapsedSeconds() : 0;
 
   const entry = {
     questionId: currentQuestion.id ?? null,
+    type,
     prompt: currentQuestion.prompt,
     playerName,
     skipped,
+    optionsRevealed,
     yourOrder: skipped ? [] : [...selection],
-    correctOrder: [...currentQuestion.correctOrder],
+    correctOrder: type === "order" ? [...currentQuestion.correctOrder] : null,
+    correctAnswer: type === "single" ? currentQuestion.correctAnswer : null,
     correct: skipped ? null : correct,
     seconds: Math.round(seconds * 10) / 10,
     timestamp: new Date().toISOString(),
@@ -250,15 +409,20 @@ function showFeedback({ skipped, correct, seconds }) {
 
   feedbackTime.textContent = `Time: ${seconds.toFixed(1)} seconds`;
 
+  const type = getQuestionType(currentQuestion);
+  const singleLabels = type === "single";
+
+  feedbackYourLabel.textContent = singleLabels ? "Your answer" : "Your order";
+  feedbackCorrectLabel.textContent = singleLabels ? "Correct answer" : "Correct order";
+
   if (skipped) {
-    feedbackYourOrder.textContent = "—";
+    feedbackYourOrder.innerHTML = "—";
   } else {
-    feedbackYourOrder.textContent = formatOrder(selection, currentQuestion);
+    feedbackYourOrder.innerHTML = escapeHtml(
+      formatUserResponse(selection, currentQuestion)
+    );
   }
-  feedbackCorrectOrder.textContent = formatOrder(
-    currentQuestion.correctOrder,
-    currentQuestion
-  );
+  feedbackCorrectOrder.innerHTML = escapeHtml(formatCorrectResponse(currentQuestion));
 
   if (isSessionComplete()) {
     feedbackTime.textContent += ` · Session complete (${sessionTarget} questions)`;
@@ -269,7 +433,7 @@ function showFeedback({ skipped, correct, seconds }) {
 }
 
 function submitAnswer() {
-  const correct = ordersMatch(selection, currentQuestion.correctOrder);
+  const correct = isAnswerCorrect();
   finishQuestion({ skipped: false, correct });
 }
 
@@ -392,7 +556,7 @@ function showSummary() {
           <td>${i + 1}</td>
           <td><span class="result-badge ${resultClass(entry)}">${resultLabel(entry)}</span></td>
           <td>${entry.seconds.toFixed(1)}s</td>
-          <td>${escapeHtml(truncate(entry.prompt))}</td>
+          <td title="${escapeHtml(formatPromptSummary(entry.prompt))}">${escapeHtml(truncate(entry.prompt.en))}<br><span class="summary-prompt-hi">${escapeHtml(truncate(entry.prompt.hi, 48))}</span></td>
         </tr>
       `
     )
@@ -436,8 +600,10 @@ welcomeForm.addEventListener("submit", (e) => {
   startGame(name, questionCount);
 });
 
+btnShowOptions.addEventListener("click", revealOptions);
 btnClear.addEventListener("click", clearSelection);
 btnSkip.addEventListener("click", skipQuestion);
+btnSkipPrompt.addEventListener("click", skipQuestion);
 btnNext.addEventListener("click", nextQuestion);
 btnEnd.addEventListener("click", endPractice);
 btnEndGame.addEventListener("click", endPractice);
