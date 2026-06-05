@@ -1,21 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A proposal</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KBC Fastest Finger First — Practice</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1 class="main-text">Coming home?</h1>
-        <div class="btn-container">
-            <!-- "testing comments" -->
-            <button class="btn btn-yes" onclick="window.location.href='https://www.google.com';">Yes</button>
-            <button class="btn btn-no" id="noButton">No</button>
-        </div>
-    </div>
+  <main class="app">
+    <section id="screen-welcome" class="screen screen--active">
+      <h1 class="title">KBC Fastest Finger First</h1>
+      <p class="subtitle">Practice</p>
+      <form id="welcome-form" class="welcome-form">
+        <label class="field-label" for="player-name">Your name</label>
+        <input
+          id="player-name"
+          class="field-input"
+          type="text"
+          name="playerName"
+          autocomplete="name"
+          placeholder="Enter your name"
+          required
+          maxlength="60"
+        />
+        <label class="field-label" for="question-count">Number of questions</label>
+        <select id="question-count" class="field-input field-select" name="questionCount" required>
+          <option value="20" selected>20</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="200">200</option>
+        </select>
+        <button type="submit" class="btn btn--primary">Start</button>
+      </form>
+      <p id="load-error" class="error-msg" hidden></p>
+    </section>
 
-    <script src="script.js"></script>
+    <section id="screen-game" class="screen" hidden>
+      <header class="game-header">
+        <span id="player-label" class="player-label"></span>
+        <span id="question-counter" class="question-counter"></span>
+      </header>
+
+      <p id="question-prompt" class="question-prompt"></p>
+
+      <p id="selection-display" class="selection-display" aria-live="polite">
+        Tap options in order…
+      </p>
+
+      <div id="options-grid" class="options-grid" role="group" aria-label="Answer options"></div>
+
+      <div class="action-row">
+        <button type="button" id="btn-clear" class="btn btn--secondary">Clear</button>
+        <button type="button" id="btn-skip" class="btn btn--secondary">Skip</button>
+      </div>
+
+      <p id="timer-display" class="timer-display">0.0s</p>
+    </section>
+
+    <section id="screen-feedback" class="screen" hidden>
+      <p id="feedback-headline" class="feedback-headline"></p>
+      <p id="feedback-time" class="feedback-time"></p>
+      <dl class="feedback-details">
+        <div class="feedback-row">
+          <dt>Your order</dt>
+          <dd id="feedback-your-order"></dd>
+        </div>
+        <div class="feedback-row">
+          <dt>Correct order</dt>
+          <dd id="feedback-correct-order"></dd>
+        </div>
+      </dl>
+      <button type="button" id="btn-next" class="btn btn--primary">Next question</button>
+      <button type="button" id="btn-end" class="btn btn--ghost">End practice</button>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
 </body>
 </html>

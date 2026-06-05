@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "questions": [
+    {
+      "id": "demo-1",
+      "prompt": "Arrange these numbers from smallest to largest.",
+      "options": [
+        { "key": "A", "text": "9" },
+        { "key": "B", "text": "3" },
+        { "key": "C", "text": "7" },
+        { "key": "D", "text": "1" }
+      ],
+      "correctOrder": ["D", "B", "C", "A"]
+    },
+    {
+      "id": "demo-2",
+      "prompt": "Arrange these Indian cities from north to south.",
+      "options": [
+        { "key": "A", "text": "Delhi" },
+        { "key": "B", "text": "Mumbai" },
+        { "key": "C", "text": "Chennai" },
+        { "key": "D", "text": "Kolkata" }
+      ],
+      "correctOrder": ["A", "D", "B", "C"]
+    },
+    {
+      "id": "demo-3",
+      "prompt": "Arrange these planets by distance from the Sun (nearest first).",
+      "options": [
+        { "key": "A", "text": "Mars" },
+        { "key": "B", "text": "Venus" },
+        { "key": "C", "text": "Earth" },
+        { "key": "D", "text": "Mercury" }
+      ],
+      "correctOrder": ["D", "B", "C", "A"]
+    }
+  ]
+}
