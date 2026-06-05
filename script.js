@@ -10,6 +10,14 @@ const screens = {
 
 const QUESTION_COUNT_OPTIONS = [20, 50, 100, 200];
 
+/** Reading time before options appear (scaled by EN + HI prompt length). */
+const READ_TIME = {
+  MIN_SECONDS: 4,
+  MAX_SECONDS: 22,
+  BASE_SECONDS: 3,
+  SECONDS_PER_CHAR: 0.045,
+};
+
 const welcomeForm = document.getElementById("welcome-form");
 const playerNameInput = document.getElementById("player-name");
 const questionCountSelect = document.getElementById("question-count");
@@ -18,7 +26,8 @@ const loadError = document.getElementById("load-error");
 const playerLabel = document.getElementById("player-label");
 const questionCounter = document.getElementById("question-counter");
 const questionPrompt = document.getElementById("question-prompt");
-const btnShowOptions = document.getElementById("btn-show-options");
+const promptCountdown = document.getElementById("prompt-countdown");
+const promptCountdownValue = document.getElementById("prompt-countdown-value");
 const gameAnswerPanel = document.getElementById("game-answer-panel");
 const selectionDisplay = document.getElementById("selection-display");
 const optionsGrid = document.getElementById("options-grid");
@@ -50,6 +59,8 @@ let currentQuestion = null;
 let selection = [];
 let questionStartMs = 0;
 let timerIntervalId = null;
+let promptCountdownIntervalId = null;
+let promptCountdownEndMs = 0;
 let locked = false;
 let optionsRevealed = false;
 let sessionTarget = 20;
@@ -153,11 +164,54 @@ function elapsedSeconds() {
   return (performance.now() - questionStartMs) / 1000;
 }
 
+function computeReadSeconds(prompt) {
+  const chars = prompt.en.length + prompt.hi.length;
+  const raw = READ_TIME.BASE_SECONDS + chars * READ_TIME.SECONDS_PER_CHAR;
+  return Math.min(
+    READ_TIME.MAX_SECONDS,
+    Math.max(READ_TIME.MIN_SECONDS, Math.ceil(raw))
+  );
+}
+
 function stopTimer() {
   if (timerIntervalId !== null) {
     clearInterval(timerIntervalId);
     timerIntervalId = null;
   }
+}
+
+function stopPromptCountdown() {
+  if (promptCountdownIntervalId !== null) {
+    clearInterval(promptCountdownIntervalId);
+    promptCountdownIntervalId = null;
+  }
+}
+
+function stopAllTimers() {
+  stopTimer();
+  stopPromptCountdown();
+}
+
+function startPromptCountdown(durationSeconds) {
+  stopPromptCountdown();
+  promptCountdown.hidden = false;
+  promptCountdownEndMs = performance.now() + durationSeconds * 1000;
+
+  const tick = () => {
+    if (locked || optionsRevealed || !currentQuestion) {
+      return;
+    }
+    const remainingMs = promptCountdownEndMs - performance.now();
+    if (remainingMs <= 0) {
+      stopPromptCountdown();
+      revealOptions();
+      return;
+    }
+    promptCountdownValue.textContent = String(Math.ceil(remainingMs / 1000));
+  };
+
+  tick();
+  promptCountdownIntervalId = setInterval(tick, 100);
 }
 
 function startTimer() {
@@ -233,18 +287,21 @@ function drawNextQuestion() {
   return questionBank[index];
 }
 
-function setPromptPhaseUI() {
+function setPromptPhaseUI(question) {
   optionsRevealed = false;
-  btnShowOptions.hidden = false;
   gameAnswerPanel.hidden = true;
   btnSkipPrompt.hidden = false;
   stopTimer();
   timerDisplay.textContent = "—";
+
+  const readSeconds = computeReadSeconds(question.prompt);
+  startPromptCountdown(readSeconds);
 }
 
 function setOptionsPhaseUI() {
   optionsRevealed = true;
-  btnShowOptions.hidden = true;
+  stopPromptCountdown();
+  promptCountdown.hidden = true;
   gameAnswerPanel.hidden = false;
   btnSkipPrompt.hidden = true;
   updateSelectionUI();
@@ -323,7 +380,7 @@ function renderQuestion(question) {
 
   questionPrompt.innerHTML = renderPromptHtml(question.prompt);
   buildOptionsGrid(question);
-  setPromptPhaseUI();
+  setPromptPhaseUI(question);
 
   updateQuestionCounter();
 }
@@ -368,7 +425,8 @@ function ordersMatch(a, b) {
 
 function finishQuestion({ skipped, correct }) {
   locked = true;
-  stopTimer();
+  stopAllTimers();
+  promptCountdown.hidden = true;
   const type = getQuestionType(currentQuestion);
   const seconds = optionsRevealed ? elapsedSeconds() : 0;
 
@@ -514,7 +572,8 @@ function truncate(text, max = 72) {
 }
 
 function showSummary() {
-  stopTimer();
+  stopAllTimers();
+  promptCountdown.hidden = true;
   const stats = computeSessionStats();
 
   summaryPlayer.textContent = playerName;
@@ -568,7 +627,8 @@ function showSummary() {
 
 function endPractice() {
   if (sessionLog.length === 0) {
-    stopTimer();
+    stopAllTimers();
+    promptCountdown.hidden = true;
     goWelcome();
     return;
   }
@@ -576,7 +636,8 @@ function endPractice() {
 }
 
 function goWelcome() {
-  stopTimer();
+  stopAllTimers();
+  promptCountdown.hidden = true;
   playerNameInput.value = playerName;
   showScreen("welcome");
 }
@@ -600,7 +661,6 @@ welcomeForm.addEventListener("submit", (e) => {
   startGame(name, questionCount);
 });
 
-btnShowOptions.addEventListener("click", revealOptions);
 btnClear.addEventListener("click", clearSelection);
 btnSkip.addEventListener("click", skipQuestion);
 btnSkipPrompt.addEventListener("click", skipQuestion);
