@@ -5,6 +5,7 @@ const screens = {
   welcome: document.getElementById("screen-welcome"),
   game: document.getElementById("screen-game"),
   feedback: document.getElementById("screen-feedback"),
+  summary: document.getElementById("screen-summary"),
 };
 
 const QUESTION_COUNT_OPTIONS = [20, 50, 100, 200];
@@ -29,6 +30,13 @@ const feedbackYourOrder = document.getElementById("feedback-your-order");
 const feedbackCorrectOrder = document.getElementById("feedback-correct-order");
 const btnNext = document.getElementById("btn-next");
 const btnEnd = document.getElementById("btn-end");
+const btnEndGame = document.getElementById("btn-end-game");
+
+const summaryPlayer = document.getElementById("summary-player");
+const summaryStatus = document.getElementById("summary-status");
+const summaryStats = document.getElementById("summary-stats");
+const summaryTableBody = document.getElementById("summary-table-body");
+const btnSummaryHome = document.getElementById("btn-summary-home");
 
 let questionBank = [];
 let deck = [];
@@ -254,7 +262,7 @@ function showFeedback({ skipped, correct, seconds }) {
 
   if (isSessionComplete()) {
     feedbackTime.textContent += ` · Session complete (${sessionTarget} questions)`;
-    btnNext.textContent = "New practice session";
+    btnNext.textContent = "View session summary";
   } else {
     btnNext.textContent = `Next question (${sessionLog.length + 1} / ${sessionTarget})`;
   }
@@ -288,7 +296,7 @@ function startGame(name, questionCount) {
 
 function nextQuestion() {
   if (isSessionComplete()) {
-    endPractice();
+    showSummary();
     return;
   }
   if (deck.length === 0 && questionBank.length > 0) {
@@ -298,7 +306,112 @@ function nextQuestion() {
   renderQuestion(drawNextQuestion());
 }
 
+function computeSessionStats() {
+  const attempted = sessionLog.length;
+  const correct = sessionLog.filter((e) => e.correct === true).length;
+  const incorrect = sessionLog.filter((e) => e.correct === false).length;
+  const skipped = sessionLog.filter((e) => e.skipped).length;
+  const totalSeconds = sessionLog.reduce((sum, e) => sum + e.seconds, 0);
+  const answered = sessionLog.filter((e) => !e.skipped);
+  const avgSeconds =
+    answered.length > 0
+      ? Math.round((totalSeconds / sessionLog.length) * 10) / 10
+      : 0;
+  const avgAnsweredSeconds =
+    answered.length > 0
+      ? Math.round((answered.reduce((s, e) => s + e.seconds, 0) / answered.length) * 10) / 10
+      : 0;
+
+  return {
+    attempted,
+    correct,
+    incorrect,
+    skipped,
+    totalSeconds: Math.round(totalSeconds * 10) / 10,
+    avgSeconds,
+    avgAnsweredSeconds,
+    completed: attempted >= sessionTarget,
+  };
+}
+
+function resultLabel(entry) {
+  if (entry.skipped) return "Skipped";
+  return entry.correct ? "Correct" : "Incorrect";
+}
+
+function resultClass(entry) {
+  if (entry.skipped) return "result--skip";
+  return entry.correct ? "result--correct" : "result--wrong";
+}
+
+function truncate(text, max = 72) {
+  if (text.length <= max) return text;
+  return `${text.slice(0, max - 1)}…`;
+}
+
+function showSummary() {
+  stopTimer();
+  const stats = computeSessionStats();
+
+  summaryPlayer.textContent = playerName;
+  summaryStatus.textContent = stats.completed
+    ? `Completed all ${sessionTarget} questions.`
+    : `Ended early — ${stats.attempted} of ${sessionTarget} questions attempted.`;
+
+  summaryStats.innerHTML = `
+    <div class="summary-stat">
+      <dt>Correct</dt>
+      <dd class="stat--correct">${stats.correct}</dd>
+    </div>
+    <div class="summary-stat">
+      <dt>Incorrect</dt>
+      <dd class="stat--wrong">${stats.incorrect}</dd>
+    </div>
+    <div class="summary-stat">
+      <dt>Skipped</dt>
+      <dd class="stat--skip">${stats.skipped}</dd>
+    </div>
+    <div class="summary-stat">
+      <dt>Total time</dt>
+      <dd>${stats.totalSeconds}s</dd>
+    </div>
+    <div class="summary-stat">
+      <dt>Avg time / question</dt>
+      <dd>${stats.avgSeconds}s</dd>
+    </div>
+    <div class="summary-stat">
+      <dt>Avg time (answered)</dt>
+      <dd>${stats.avgAnsweredSeconds}s</dd>
+    </div>
+  `;
+
+  summaryTableBody.innerHTML = sessionLog
+    .map(
+      (entry, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td><span class="result-badge ${resultClass(entry)}">${resultLabel(entry)}</span></td>
+          <td>${entry.seconds.toFixed(1)}s</td>
+          <td>${escapeHtml(truncate(entry.prompt))}</td>
+        </tr>
+      `
+    )
+    .join("");
+
+  console.log("FFF session summary:", { playerName, sessionTarget, ...stats, sessionLog });
+  showScreen("summary");
+}
+
 function endPractice() {
+  if (sessionLog.length === 0) {
+    stopTimer();
+    goWelcome();
+    return;
+  }
+  showSummary();
+}
+
+function goWelcome() {
   stopTimer();
   playerNameInput.value = playerName;
   showScreen("welcome");
@@ -327,6 +440,8 @@ btnClear.addEventListener("click", clearSelection);
 btnSkip.addEventListener("click", skipQuestion);
 btnNext.addEventListener("click", nextQuestion);
 btnEnd.addEventListener("click", endPractice);
+btnEndGame.addEventListener("click", endPractice);
+btnSummaryHome.addEventListener("click", goWelcome);
 
 loadQuestions()
   .then((questions) => {

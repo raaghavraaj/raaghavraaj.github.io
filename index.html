@@ -55,6 +55,7 @@
       </div>
 
       <p id="timer-display" class="timer-display">0.0s</p>
+      <button type="button" id="btn-end-game" class="btn btn--ghost btn--end-game">End practice</button>
     </section>
 
     <section id="screen-feedback" class="screen" hidden>
@@ -72,6 +73,30 @@
       </dl>
       <button type="button" id="btn-next" class="btn btn--primary">Next question</button>
       <button type="button" id="btn-end" class="btn btn--ghost">End practice</button>
+    </section>
+
+    <section id="screen-summary" class="screen" hidden>
+      <h2 class="summary-title">Session summary</h2>
+      <p id="summary-player" class="summary-player"></p>
+      <p id="summary-status" class="summary-status"></p>
+
+      <dl id="summary-stats" class="summary-stats"></dl>
+
+      <div class="summary-table-wrap">
+        <table class="summary-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Result</th>
+              <th>Time</th>
+              <th>Question</th>
+            </tr>
+          </thead>
+          <tbody id="summary-table-body"></tbody>
+        </table>
+      </div>
+
+      <button type="button" id="btn-summary-home" class="btn btn--primary">New practice session</button>
     </section>
   </main>
 
