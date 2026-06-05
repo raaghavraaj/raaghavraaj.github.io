@@ -53,7 +53,10 @@ const summaryTableBody = document.getElementById("summary-table-body");
 const btnSummaryHome = document.getElementById("btn-summary-home");
 
 let questionBank = [];
-let deck = [];
+/** Shuffled indices still to draw this session (no repeat until bank exhausted). */
+let unusedPool = [];
+/** Question ids already shown in the current session cycle. */
+let sessionSeenIds = new Set();
 let playerName = "";
 let currentQuestion = null;
 let selection = [];
@@ -279,12 +282,31 @@ async function loadQuestions() {
   return data.questions;
 }
 
-function drawNextQuestion() {
-  if (deck.length === 0) {
-    deck = shuffle(questionBank.map((_, i) => i));
+function questionKey(question, index) {
+  return question.id ?? `idx-${index}`;
+}
+
+function buildUnusedPool() {
+  const unseenIndices = questionBank
+    .map((_, i) => i)
+    .filter((i) => !sessionSeenIds.has(questionKey(questionBank[i], i)));
+
+  if (unseenIndices.length > 0) {
+    return shuffle(unseenIndices);
   }
-  const index = deck.pop();
-  return questionBank[index];
+
+  sessionSeenIds.clear();
+  return shuffle(questionBank.map((_, i) => i));
+}
+
+function drawNextQuestion() {
+  if (unusedPool.length === 0) {
+    unusedPool = buildUnusedPool();
+  }
+  const index = unusedPool.pop();
+  const question = questionBank[index];
+  sessionSeenIds.add(questionKey(question, index));
+  return question;
 }
 
 function setPromptPhaseUI(question) {
@@ -506,11 +528,16 @@ function skipQuestion() {
   finishQuestion({ skipped: true, correct: null });
 }
 
+function resetSessionQuestionPool() {
+  sessionSeenIds.clear();
+  unusedPool = buildUnusedPool();
+}
+
 function startGame(name, questionCount) {
   playerName = name.trim();
   sessionTarget = questionCount;
   playerLabel.textContent = playerName;
-  deck = shuffle(questionBank.map((_, i) => i));
+  resetSessionQuestionPool();
   sessionLog.length = 0;
   showScreen("game");
   renderQuestion(drawNextQuestion());
@@ -520,9 +547,6 @@ function nextQuestion() {
   if (isSessionComplete()) {
     showSummary();
     return;
-  }
-  if (deck.length === 0 && questionBank.length > 0) {
-    deck = shuffle(questionBank.map((_, i) => i));
   }
   showScreen("game");
   renderQuestion(drawNextQuestion());
